@@ -74,7 +74,7 @@ export default function Footer({ onNavigate, metServices }) {
       if (onNavigate) onNavigate(sectionKey);
     }
   };
-  console.log("metServicesmetServices", metServices);
+  // console.log("metServicesmetServices", metServices);
   return (
     <>
       <footer
