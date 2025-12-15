@@ -7,8 +7,8 @@
 
 import { createClient } from "contentful";
 
-const space = process.env.CONTENTFUL_SPACE_ID | "0j1vh9j4mlnb";
-const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN | "jdVQvfIp3PnCyS6mXyMPLWr68kaZr5oGcTG0IN91AXc";
+const space = "0j1vh9j4mlnb";
+const accessToken = "jdVQvfIp3PnCyS6mXyMPLWr68kaZr5oGcTG0IN91AXc";
 
 if (!space || !accessToken) {
   throw new Error("Contentful environment variables are missing");
