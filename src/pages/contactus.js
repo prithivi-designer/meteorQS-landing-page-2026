@@ -4,20 +4,29 @@ import { Button } from "@heroui/react";
 // import ContactUSInfo from "@/components/contactus";
 import { useState } from "react";
 import { client } from "@/lib/contentful";
-export async function getStaticProps() {
-  const resIndustries = await client.getEntries({
-    content_type: "meteoriqsIndustries",
-  });
-  const resServices = await client.getEntries({
-    content_type: "meteoriqsServices",
-  });
-  return {
-    props: {
-      industries: resIndustries.items,
-      metServices: resServices.items,
-    },
-    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
-  };
+
+export async function getServerSideProps() {
+  try {
+    const [resIndustries, resServices] = await Promise.all([
+      client.getEntries({ content_type: "meteoriqsIndustries" }),
+      client.getEntries({ content_type: "meteoriqsServices" }),
+    ]);
+
+    return {
+      props: {
+        industries: resIndustries.items,
+        metServices: resServices.items,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching Contentful data:", error);
+    return {
+      props: {
+        industries: [],
+        metServices: [],
+      },
+    };
+  }
 }
 export default function ContactUs({ industries, metServices }) {
   const [loading, setLoading] = useState(false);

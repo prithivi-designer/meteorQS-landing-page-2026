@@ -1,4 +1,3 @@
-import LatestPosts from "@/components/home/latestblog";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { client } from "@/lib/contentful";
@@ -6,39 +5,35 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import dayjs from "dayjs";
 
-export async function getStaticPaths() {
-  const res = await client.getEntries({ content_type: "meteoriqsCasestudy" });
+export async function getServerSideProps(context) {
+  const { slug } = context.params;
 
-  const paths = res.items.map((casestudy) => ({
-    params: { slug: casestudy.fields.slug },
-  }));
-  console.log("paths", paths);
-  return {
-    paths,
-    fallback: false, // can also use "blocking"
-  };
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsCasestudy",
+      "fields.slug": slug,
+    });
+
+    if (!res.items.length) {
+      return { notFound: true }; // 404 if deleted
+    }
+
+    return {
+      props: {
+        casestudy: res.items[0],
+      },
+    };
+  } catch (error) {
+    console.error("Contentful error:", error);
+    return { notFound: true };
+  }
 }
 
-export async function getStaticProps({ params }) {
-  const res = await client.getEntries({
-    content_type: "meteoriqsCasestudy",
-    "fields.slug": params.slug,
-  });
-
-  return {
-    props: {
-      casestudy: res.items[0],
-    },
-    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
-  };
-}
-
-export default function BlogDetail({ casestudy }) {
+export default function CaseStudyDetail({ casestudy }) {
   const { title, content, date, coverImage, section } = casestudy.fields;
 
   const options = {
     renderNode: {
-      // Embedded Asset (image inside the content)
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
         const { file, title } = node.data.target.fields;
         return (
@@ -49,8 +44,6 @@ export default function BlogDetail({ casestudy }) {
           />
         );
       },
-
-      // Hyperlinked asset (image with a link in text)
       [INLINES.ASSET_HYPERLINK]: (node, children) => {
         const { file, title } = node.data.target.fields;
         return (
@@ -70,18 +63,17 @@ export default function BlogDetail({ casestudy }) {
   return (
     <>
       <Header />
+
       <div className="py-[8rem] px-[1rem] max-w-[60rem] mx-auto">
         <h1 className="text-3xl font-bold mb-4">{title}</h1>
-        {date ? (
+
+        {date && (
           <p className="text-gray-500 mb-6">
-            {dayjs(date).format(" MM-DD-YYYY")}
+            {dayjs(date).format("MM-DD-YYYY")}
           </p>
-        ) : (
-          ""
         )}
 
-        {/* Render cover image */}
-        {coverImage && coverImage?.fields?.file?.url && (
+        {coverImage?.fields?.file?.url && (
           <img
             src={`https:${coverImage.fields.file.url}`}
             alt={coverImage.fields.title}
@@ -89,10 +81,10 @@ export default function BlogDetail({ casestudy }) {
           />
         )}
 
-        {/* Render rich text content */}
         <div className="prose max-w-none">
           {documentToReactComponents(content, options)}
         </div>
+
         {section?.map((sectionItem, index) => {
           const { layoutType, sectionImage, sectionContent } =
             sectionItem.fields;
@@ -100,10 +92,10 @@ export default function BlogDetail({ casestudy }) {
           if (layoutType === "left-image") {
             return (
               <div key={index} className="flex gap-4 my-8">
-                {sectionImage && (
+                {sectionImage?.[0]?.fields?.file?.url && (
                   <img
-                    src={`https:${sectionImage[0]?.fields?.file?.url}`}
-                    alt={sectionImage[0]?.fields?.title}
+                    src={`https:${sectionImage[0].fields.file.url}`}
+                    alt={sectionImage[0].fields.title}
                     className="w-1/2 rounded-lg"
                   />
                 )}
@@ -117,10 +109,10 @@ export default function BlogDetail({ casestudy }) {
           if (layoutType === "right-image") {
             return (
               <div key={index} className="flex flex-row-reverse gap-4 my-8">
-                {sectionImage && (
+                {sectionImage?.[0]?.fields?.file?.url && (
                   <img
                     src={`https:${sectionImage[0].fields.file.url}`}
-                    alt={sectionImage[0]?.fields?.title}
+                    alt={sectionImage[0].fields.title}
                     className="w-1/2 rounded-lg"
                   />
                 )}
@@ -133,10 +125,8 @@ export default function BlogDetail({ casestudy }) {
 
           if (layoutType === "full-width") {
             return (
-              <div key={index} className="my-8">
-                <div className="prose mt-4">
-                  {documentToReactComponents(sectionContent, options)}
-                </div>
+              <div key={index} className="my-8 prose">
+                {documentToReactComponents(sectionContent, options)}
               </div>
             );
           }

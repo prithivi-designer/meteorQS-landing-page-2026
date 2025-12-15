@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { client } from "@/lib/contentful";
@@ -8,48 +8,46 @@ import ClientMapping from "@/components/home/client-mapping";
 import LatestPosts from "@/components/home/latestblog";
 import CaseStudies from "@/components/home/casestudy";
 
-export async function getStaticPaths() {
-  const res = await client.getEntries({ content_type: "meteoriqsIndustries" });
+export async function getServerSideProps(context) {
+  const { slug } = context.params;
 
-  const paths = res.items.map((industry) => ({
-    params: { slug: industry.fields.slug },
-  }));
-  console.log("paths", paths);
-  return {
-    paths,
-    fallback: false, // can also use "blocking"
-  };
+  try {
+    const [
+      resIndustry,
+      resIndustries,
+      resBlog,
+      resCasestudy,
+      resServices,
+    ] = await Promise.all([
+      client.getEntries({
+        content_type: "meteoriqsIndustries",
+        "fields.slug": slug,
+      }),
+      client.getEntries({ content_type: "meteoriqsIndustries" }),
+      client.getEntries({ content_type: "meteoriqsBlog" }),
+      client.getEntries({ content_type: "meteoriqsCasestudy" }),
+      client.getEntries({ content_type: "meteoriqsServices" }),
+    ]);
+
+    if (!resIndustry.items.length) {
+      return { notFound: true }; // 404 if industry deleted
+    }
+
+    return {
+      props: {
+        industry: resIndustry.items[0],
+        industries: resIndustries.items,
+        blogs: resBlog.items,
+        casestudies: resCasestudy.items,
+        metServices: resServices.items,
+      },
+    };
+  } catch (error) {
+    console.error("Contentful fetch error:", error);
+    return { notFound: true };
+  }
 }
 
-export async function getStaticProps({ params }) {
-  const res = await client.getEntries({
-    content_type: "meteoriqsIndustries",
-    "fields.slug": params.slug,
-  });
-
-  const resIndustries = await client.getEntries({
-    content_type: "meteoriqsIndustries",
-  });
-  const resBlog = await client.getEntries({
-    content_type: "meteoriqsBlog",
-  });
-  const resCasestudy = await client.getEntries({
-    content_type: "meteoriqsCasestudy",
-  });
-  const resServices = await client.getEntries({
-    content_type: "meteoriqsServices",
-  });
-  return {
-    props: {
-      industry: res.items[0],
-      industries: resIndustries.items,
-      blogs: resBlog.items,
-      casestudies: resCasestudy.items,
-      metServices: resServices.items,
-    },
-    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
-  };
-}
 export default function IndustryDetail({
   industry,
   industries,
@@ -61,7 +59,6 @@ export default function IndustryDetail({
 
   const options = {
     renderNode: {
-      // Embedded Asset (image inside the industriesContent)
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
         const { file, title } = node.data.target.fields;
         return (
@@ -72,8 +69,6 @@ export default function IndustryDetail({
           />
         );
       },
-
-      // Hyperlinked asset (image with a link in text)
       [INLINES.ASSET_HYPERLINK]: (node, children) => {
         const { file, title } = node.data.target.fields;
         return (
@@ -89,20 +84,20 @@ export default function IndustryDetail({
       },
     },
   };
+
   return (
     <>
       <Header industries={industries} />
-      <section className="py-[4rem] px-[0rem]  mx-auto">
-        {/* Render cover image */}
-        {bannerImage && bannerImage?.fields?.file?.url && (
+
+      <section className="py-[4rem] px-[0rem] mx-auto">
+        {bannerImage?.fields?.file?.url && (
           <img
             src={`https:${bannerImage.fields.file.url}`}
             alt={bannerImage.fields.title}
-            className="mb-6 w-full object-cover max-h-[30rem] object-center"
+            className="mb-6 w-full object-cover max-h-[30rem]"
           />
         )}
 
-        {/* Render rich text industriesContent */}
         <h1 className="lg:text-[3.5rem] md:text-[2.5rem] text-[2rem] font-bold mb-4 text-center">
           {title}
         </h1>
@@ -111,6 +106,7 @@ export default function IndustryDetail({
           {documentToReactComponents(industriesContent, options)}
         </div>
       </section>
+
       <LatestPosts blogs={blogs} />
       <ClientMapping />
       <CaseStudies casestudies={casestudies} />

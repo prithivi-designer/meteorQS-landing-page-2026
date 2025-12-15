@@ -1,42 +1,48 @@
 "use client";
 
 import React, { useRef } from "react";
-// import LandingPg from "@/components/home";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-// import ZoomImageSection from "@/component/zoom-hero";
 import dynamic from "next/dynamic";
 import { client } from "@/lib/contentful";
-// Import it client-only
+
+// LandingPg imported client-side only
 const LandingPg = dynamic(() => import("@/components/home"), {
   ssr: false,
 });
-export async function getStaticProps() {
-  const res = await client.getEntries({ content_type: "meteoriqsBlog" });
-  const resCasestudy = await client.getEntries({
-    content_type: "meteoriqsCasestudy",
-  });
-  const resIndustries = await client.getEntries({
-    content_type: "meteoriqsIndustries",
-  });
-  const resServices = await client.getEntries({
-    content_type: "meteoriqsServices",
-  });
-  return {
-    props: {
-      blogs: res.items,
-      casestudies: resCasestudy.items,
-      industries: resIndustries.items,
-      metServices: resServices.items,
-    },
-    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
-  };
+
+export async function getServerSideProps() {
+  try {
+    const [resBlogs, resCasestudy, resIndustries, resServices] =
+      await Promise.all([
+        client.getEntries({ content_type: "meteoriqsBlog" }),
+        client.getEntries({ content_type: "meteoriqsCasestudy" }),
+        client.getEntries({ content_type: "meteoriqsIndustries" }),
+        client.getEntries({ content_type: "meteoriqsServices" }),
+      ]);
+
+    return {
+      props: {
+        blogs: resBlogs.items.filter((b) => b.fields.slug),
+        casestudies: resCasestudy.items,
+        industries: resIndustries.items,
+        metServices: resServices.items,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching Contentful data:", error);
+    return {
+      props: {
+        blogs: [],
+        casestudies: [],
+        industries: [],
+        metServices: [],
+      },
+    };
+  }
 }
 
 export default function Home({ blogs, casestudies, industries, metServices }) {
-  // console.log("metServices", metServices);
-  // Add near your other useRefs
-
   const homeSectionRef = useRef(null);
   const aboutSectionRef = useRef(null);
   const testimonialsRef = useRef(null);
@@ -56,14 +62,12 @@ export default function Home({ blogs, casestudies, industries, metServices }) {
   };
 
   const handleScrollTo = (section) => {
-    console.log("sectionsection", section);
     const ref = sectionRefs[section];
-    console.log("sectionsection", ref);
-
     if (ref?.current) {
       ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
   return (
     <>
       <Header onNavigate={handleScrollTo} industries={industries} />

@@ -6,32 +6,37 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import dayjs from "dayjs";
 
-export async function getStaticPaths() {
-  const res = await client.getEntries({ content_type: "meteoriqsBlog" });
+export async function getServerSideProps(context) {
+  const { slug } = context.params;
 
-  const paths = res.items.map((blog) => ({
-    params: { slug: blog.fields.slug },
-  }));
-  console.log("paths", paths);
-  return {
-    paths,
-    fallback: false, // can also use "blocking"
-  };
-}
+  try {
+    // Fetch blog detail
+    const res = await client.getEntries({
+      content_type: "meteoriqsBlog",
+      "fields.slug": slug,
+      limit: 1,
+    });
 
-export async function getStaticProps({ params }) {
-  const res = await client.getEntries({
-    content_type: "meteoriqsBlog",
-    "fields.slug": params.slug,
-  });
+    if (!res.items.length) {
+      return { notFound: true }; // Blog deleted or invalid slug
+    }
 
-  return {
-    props: {
-      blog: res.items[0],
-      blogs: res.items,
-    },
-    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
-  };
+    // Fetch latest blogs for sidebar / latest posts
+    const resBlogs = await client.getEntries({
+      content_type: "meteoriqsBlog",
+      order: "-fields.date",
+    });
+
+    return {
+      props: {
+        blog: res.items[0],
+        blogs: resBlogs.items.filter((b) => b.fields?.slug),
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    return { notFound: true };
+  }
 }
 
 export default function BlogDetail({ blog, blogs }) {
@@ -39,19 +44,16 @@ export default function BlogDetail({ blog, blogs }) {
 
   const options = {
     renderNode: {
-      // Embedded Asset (image inside the content)
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
         const { file, title } = node.data.target.fields;
         return (
           <img
             src={`https:${file.url}`}
             alt={title}
-            className="my-6 rounded-lg"
+            className="my-6 rounded-lg w-full"
           />
         );
       },
-
-      // Hyperlinked asset (image with a link in text)
       [INLINES.ASSET_HYPERLINK]: (node, children) => {
         const { file, title } = node.data.target.fields;
         return (
@@ -71,44 +73,51 @@ export default function BlogDetail({ blog, blogs }) {
   return (
     <>
       <Header />
+
       <div className="py-[8rem] px-[1rem] max-w-[60rem] mx-auto">
         <h1 className="text-3xl font-bold mb-4">{title}</h1>
-        {date ? (
+
+        {date && (
           <p className="text-gray-500 mb-6">
-            {dayjs(date).format(" MM-DD-YYYY")}
+            {dayjs(date).format("MM-DD-YYYY")}
           </p>
-        ) : (
-          ""
         )}
 
-        {/* Render cover image */}
-        {coverImage && coverImage?.fields?.file?.url && (
+        {coverImage?.fields?.file?.url && (
           <img
             src={`https:${coverImage.fields.file.url}`}
-            alt={coverImage.fields.title}
-            className="mb-6 rounded-lg"
+            alt={coverImage.fields.title || title}
+            className="mb-6 rounded-lg w-full"
           />
         )}
 
-        {/* Render rich text content */}
         <div className="prose max-w-none">
-          {documentToReactComponents(content, options)}
+          {content && documentToReactComponents(content, options)}
         </div>
+
         {section?.map((sectionItem, index) => {
           const { layoutType, sectionImage, sectionContent } =
             sectionItem.fields;
 
+          if (!sectionContent) return null;
+
+          const imageUrl = sectionImage?.[0]?.fields?.file?.url;
+          const imageAlt = sectionImage?.[0]?.fields?.title || "";
+
           if (layoutType === "left-image") {
             return (
-              <div key={index} className="flex gap-4 my-8">
-                {sectionImage && (
+              <div
+                key={index}
+                className="flex flex-col md:flex-row gap-4 my-8"
+              >
+                {imageUrl && (
                   <img
-                    src={`https:${sectionImage[0]?.fields?.file?.url}`}
-                    alt={sectionImage[0]?.fields?.title}
-                    className="w-1/2 rounded-lg"
+                    src={`https:${imageUrl}`}
+                    alt={imageAlt}
+                    className="w-full md:w-1/2 rounded-lg"
                   />
                 )}
-                <div className="w-1/2 prose">
+                <div className="w-full md:w-1/2 prose">
                   {documentToReactComponents(sectionContent, options)}
                 </div>
               </div>
@@ -117,15 +126,18 @@ export default function BlogDetail({ blog, blogs }) {
 
           if (layoutType === "right-image") {
             return (
-              <div key={index} className="flex flex-row-reverse gap-4 my-8">
-                {sectionImage && (
+              <div
+                key={index}
+                className="flex flex-col md:flex-row-reverse gap-4 my-8"
+              >
+                {imageUrl && (
                   <img
-                    src={`https:${sectionImage[0].fields.file.url}`}
-                    alt={sectionImage[0]?.fields?.title}
-                    className="w-1/2 rounded-lg"
+                    src={`https:${imageUrl}`}
+                    alt={imageAlt}
+                    className="w-full md:w-1/2 rounded-lg"
                   />
                 )}
-                <div className="w-1/2 prose">
+                <div className="w-full md:w-1/2 prose">
                   {documentToReactComponents(sectionContent, options)}
                 </div>
               </div>
@@ -134,10 +146,8 @@ export default function BlogDetail({ blog, blogs }) {
 
           if (layoutType === "full-width") {
             return (
-              <div key={index} className="my-8">
-                <div className="prose mt-4">
-                  {documentToReactComponents(sectionContent, options)}
-                </div>
+              <div key={index} className="my-8 prose">
+                {documentToReactComponents(sectionContent, options)}
               </div>
             );
           }
@@ -145,7 +155,9 @@ export default function BlogDetail({ blog, blogs }) {
           return null;
         })}
       </div>
-      <LatestPosts blogs={blogs} />
+
+      {blogs?.length > 0 && <LatestPosts blogs={blogs} />}
+
       <Footer />
     </>
   );
