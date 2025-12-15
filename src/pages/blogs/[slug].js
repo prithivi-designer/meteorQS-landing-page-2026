@@ -30,6 +30,7 @@ export async function getStaticProps({ params }) {
       blog: res.items[0],
       blogs: res.items,
     },
+    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
   };
 }
 

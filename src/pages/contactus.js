@@ -16,6 +16,7 @@ export async function getStaticProps() {
       industries: resIndustries.items,
       metServices: resServices.items,
     },
+    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
   };
 }
 export default function ContactUs({ industries, metServices }) {

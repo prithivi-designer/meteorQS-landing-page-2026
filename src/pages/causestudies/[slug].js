@@ -29,6 +29,7 @@ export async function getStaticProps({ params }) {
     props: {
       casestudy: res.items[0],
     },
+    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
   };
 }
 

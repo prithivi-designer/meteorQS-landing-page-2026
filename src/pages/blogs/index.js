@@ -9,6 +9,7 @@ export async function getStaticProps() {
     props: {
       blogs: res.items,
     },
+    revalidate: 60, // ISR: regenerate the page at most every 60 seconds
   };
 }
 
