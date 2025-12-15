@@ -6,7 +6,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 // import ZoomImageSection from "@/component/zoom-hero";
 import dynamic from "next/dynamic";
-import { client } from "@/lib/contentfull";
+import { client } from "@/lib/contentful";
 // Import it client-only
 const LandingPg = dynamic(() => import("@/components/home"), {
   ssr: false,

@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import { client } from "@/lib/contentfull";
+import { client } from "@/lib/contentful";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import ClientMapping from "@/components/home/client-mapping";

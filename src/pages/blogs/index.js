@@ -1,4 +1,4 @@
-import { client } from "@/lib/contentfull";
+import { client } from "@/lib/contentful";
 import Image from "next/image";
 import Link from "next/link";
 

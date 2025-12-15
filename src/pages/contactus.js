@@ -3,7 +3,7 @@ import Header from "@/components/layout/header";
 import { Button } from "@heroui/react";
 // import ContactUSInfo from "@/components/contactus";
 import { useState } from "react";
-import { client } from "@/lib/contentfull";
+import { client } from "@/lib/contentful";
 export async function getStaticProps() {
   const resIndustries = await client.getEntries({
     content_type: "meteoriqsIndustries",

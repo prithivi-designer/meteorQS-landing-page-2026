@@ -1,7 +1,7 @@
 // app/latest-posts/page.tsx
 "use client";
 
-import { client } from "@/lib/contentfull";
+import { client } from "@/lib/contentful";
 import { Card, CardHeader, CardBody } from "@heroui/react";
 
 import Image from "next/image";
