@@ -11,26 +11,61 @@ const LandingPg = dynamic(() => import("@/components/home"), {
   ssr: false,
 });
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ res }) {
   try {
-    const [resBlogs, resCasestudy, resIndustries, resServices] =
-      await Promise.all([
-        client.getEntries({ content_type: "meteoriqsBlog" }),
-        client.getEntries({ content_type: "meteoriqsCasestudy" }),
-        client.getEntries({ content_type: "meteoriqsIndustries" }),
-        client.getEntries({ content_type: "meteoriqsServices" }),
-      ]);
+    // 🚫 Disable all caching (important for production freshness)
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    const [
+      resBlogs,
+      resCasestudy,
+      resIndustries,
+      resServices,
+    ] = await Promise.all([
+      client.getEntries({
+        content_type: "meteoriqsBlog",
+        order: "-fields.date",
+        limit: 100,
+        include: 2,
+      }),
+      client.getEntries({
+        content_type: "meteoriqsCasestudy",
+        order: "-sys.createdAt",
+        limit: 100,
+        include: 2,
+      }),
+      client.getEntries({
+        content_type: "meteoriqsIndustries",
+        order: "fields.title",
+        limit: 100,
+        include: 2,
+      }),
+      client.getEntries({
+        content_type: "meteoriqsServices",
+        order: "fields.title",
+        limit: 100,
+        include: 2,
+      }),
+    ]);
 
     return {
       props: {
-        blogs: resBlogs.items.filter((b) => b.fields.slug),
-        casestudies: resCasestudy.items,
-        industries: resIndustries.items,
-        metServices: resServices.items,
+        blogs: (resBlogs.items || []).filter(
+          (b) => b?.fields?.slug
+        ),
+        casestudies: resCasestudy.items || [],
+        industries: resIndustries.items || [],
+        metServices: resServices.items || [],
       },
     };
   } catch (error) {
-    console.error("Error fetching Contentful data:", error);
+    console.error("❌ Contentful SSR Error:", error);
+
     return {
       props: {
         blogs: [],
@@ -41,6 +76,7 @@ export async function getServerSideProps() {
     };
   }
 }
+
 
 export default function Home({ blogs, casestudies, industries, metServices }) {
   const homeSectionRef = useRef(null);

@@ -3,6 +3,9 @@ import { createClient } from "contentful";
 export const client = createClient({
   space: "0j1vh9j4mlnb",
   accessToken: "jdVQvfIp3PnCyS6mXyMPLWr68kaZr5oGcTG0IN91AXc",
+  // 🚨 IMPORTANT
+  removeUnresolved: true,
+  retryOnError: true,
 });
 
 // import { createClient } from "contentful";

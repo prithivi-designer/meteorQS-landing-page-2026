@@ -2,20 +2,31 @@ import { client } from "@/lib/contentful";
 import Image from "next/image";
 import Link from "next/link";
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ res }) {
   try {
-    const res = await client.getEntries({
+    // 🚫 Disable all caching (Vercel + CDN + browser)
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    const response = await client.getEntries({
       content_type: "meteoriqsBlog",
-      order: "-fields.date", // optional: latest first
+      order: "-fields.date",
+      limit: 100,          // safety limit
+      include: 2,          // resolve linked assets
     });
 
     return {
       props: {
-        blogs: res.items,
+        blogs: response.items || [],
       },
     };
   } catch (error) {
-    console.error("Error fetching blogs:", error);
+    console.error("❌ Contentful SSR Error:", error);
+
     return {
       props: {
         blogs: [],
