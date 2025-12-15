@@ -13,9 +13,15 @@ import CaseStudies from "./casestudy";
 import Testimonials from "./testimonial";
 import LatestPosts from "./latestblog";
 import ClientMapping from "./client-mapping";
+import HappyCustomers from "./happy-employee";
 
-export default function LandingPg({ blogs, casestudies, sectionRefs }) {
-  console.log("sectionRefssectionRefssectionRefssectionRefs", sectionRefs);
+export default function LandingPg({
+  blogs,
+  casestudies,
+  metServices,
+  sectionRefs,
+}) {
+  // console.log("sectionRefssectionRefssectionRefssectionRefs", sectionRefs);
   gsap.registerPlugin(ScrollTrigger);
   // Hero section animation
   const opncirHeroSec = useRef(null);
@@ -218,11 +224,11 @@ export default function LandingPg({ blogs, casestudies, sectionRefs }) {
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
+            duration: 1.5,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: happyEmpSec.current,
-              start: "top 75%",
+              trigger: happyEmpHeading.current,
+              start: "top 100%",
               scrub: true,
               toggleActions: "play none none reverse",
             },
@@ -239,7 +245,7 @@ export default function LandingPg({ blogs, casestudies, sectionRefs }) {
             stagger: 0.3,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: happyEmpSec.current,
+              trigger: happyEmpParas.current,
               start: "top 70%",
               scrub: true,
               toggleActions: "play none none reverse",
@@ -311,16 +317,19 @@ export default function LandingPg({ blogs, casestudies, sectionRefs }) {
         globeHeading={globeHeading}
         globeParas={globeParas}
       />
-      <BehindTheBuild sectionRef={sectionRefs?.services} />
-      <GlobalClients />
+      <BehindTheBuild />
+      <GlobalClients
+        sectionRef={sectionRefs?.services}
+        metServices={metServices}
+      />
       <Testimonials sectionRef={sectionRefs?.testimonials} />
       <TechStack />
       <LatestPosts sectionRef={sectionRefs?.blog} blogs={blogs} />
-      {/* <HappyCustomers
+      <HappyCustomers
         happyEmpSec={happyEmpSec}
         happyEmpHeading={happyEmpHeading}
         happyEmpParas={happyEmpParas}
-      /> */}
+      />
       <ClientMapping happyEmpSec={happyEmpSec} />
       <CaseStudies
         sectionRef={sectionRefs?.caseStudies}

@@ -10,36 +10,36 @@ import videoPoster1 from "@/assets/images/review/review1.jpg";
 import testiImage from "@/assets/images/review/review1.jpg";
 
 const testimonials = [
-  // {
-  //   type: "video",
-  //   videoThumbnail: videoPoster1,
-  //   videoUrl:
-  //     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-  //   name: "John Doe",
-  //   company: "ABC Corp",
-  // },
-  // {
-  //   type: "video",
-  //   videoThumbnail: videoPoster1,
-  //   videoUrl:
-  //     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-  //   name: "Jane Smith",
-  //   company: "XYZ Ltd",
-  // },
-  // {
-  //   type: "image",
-  //   image: testiImage,
-  //   quote:
-  //     "Working with this team has been a game changer for us. Their expertise and dedication have truly transformed our business!",
-  //   name: "Seema Gopal",
-  //   company: "Mint Tree",
-  // },
+  {
+    type: "video",
+    videoThumbnail: videoPoster1,
+    videoUrl:
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    name: "Jane Smith",
+    company: "XYZ Ltd",
+  },
+  {
+    type: "image",
+    image: testiImage,
+    quote:
+      "Working with this team has been a game changer for us. Their expertise and dedication have truly transformed our business!",
+    name: "Seema Gopal",
+    company: "Mint Tree",
+  },
   {
     type: "text",
     quote:
       " We thank Meteoriqs for the wonderful job in helping us develop our Mobile Application. Everyone was professional, excellent and hard working. Thanks to them, we were able to achieve our goal on time, and we look forward to continue working with them in the future.",
     name: "Elumalai Munuswamy",
     company: "Founder, Fixit Group",
+  },
+  {
+    type: "video",
+    videoThumbnail: videoPoster1,
+    videoUrl:
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    name: "John Doe",
+    company: "ABC Corp",
   },
 ];
 

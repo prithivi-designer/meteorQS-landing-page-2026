@@ -39,6 +39,18 @@ const ClientAcrossGlobe = forwardRef(
                   {text}
                 </p>
               ))}
+              <ul className="text-[1rem] leading-[1.3] font-[500] list-none mt-[1rem]">
+                <li className="mb-[0.5rem] flex">
+                  <span className="w-[4rem] block">GSTIN:</span> 33AAQCM7329B1ZH
+                </li>
+                <li className="mb-[0.5rem] flex">
+                  <span className="w-[4rem] block">CIN:</span>{" "}
+                  U62020TN2023PTC159459
+                </li>
+                <li className="mb-[0.5rem] flex">
+                  <span className="w-[4rem] block">TAN:</span> CHEM27420B
+                </li>
+              </ul>
             </div>
           </div>
           <Image

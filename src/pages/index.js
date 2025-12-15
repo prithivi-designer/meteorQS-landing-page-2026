@@ -69,6 +69,7 @@ export default function Home({ blogs, casestudies, industries, metServices }) {
       <LandingPg
         blogs={blogs}
         casestudies={casestudies}
+        metServices={metServices}
         sectionRefs={sectionRefs}
       />
       <Footer onNavigate={handleScrollTo} metServices={metServices} />

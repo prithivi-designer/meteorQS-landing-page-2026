@@ -146,7 +146,7 @@ const HeroContent = forwardRef(
               <Button
                 as={Link}
                 color="default"
-                href="/"
+                href="/contactus"
                 className="text-[#052460] bg-[#FFFFFF] px-[2rem] py-[0.75rem] h-auto text-[1rem] font-[400]"
                 ref={opncirHeroButton}
               >

@@ -4,6 +4,7 @@ import Header from "@/components/layout/header";
 import { client } from "@/lib/contentfull";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
+import dayjs from "dayjs";
 
 export async function getStaticPaths() {
   const res = await client.getEntries({ content_type: "meteoriqsCasestudy" });
@@ -70,7 +71,13 @@ export default function BlogDetail({ casestudy }) {
       <Header />
       <div className="py-[8rem] px-[1rem] max-w-[60rem] mx-auto">
         <h1 className="text-3xl font-bold mb-4">{title}</h1>
-        {date ? <p className="text-gray-500 mb-6">{date}</p> : ""}
+        {date ? (
+          <p className="text-gray-500 mb-6">
+            {dayjs(date).format(" MM-DD-YYYY")}
+          </p>
+        ) : (
+          ""
+        )}
 
         {/* Render cover image */}
         {coverImage && coverImage?.fields?.file?.url && (

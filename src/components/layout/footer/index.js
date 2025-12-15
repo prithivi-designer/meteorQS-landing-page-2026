@@ -66,6 +66,7 @@ const FooterMenuList = ({ menuList, heading, setIsModalOpen, handleClick }) => {
 export default function Footer({ onNavigate, metServices }) {
   const pathname = usePathname();
   const router = useRouter();
+  const currentYear = new Date().getFullYear();
   const handleClick = (e, sectionKey) => {
     if (pathname !== "/") {
       router.push("/?scrollTo=" + sectionKey);
@@ -192,6 +193,32 @@ export default function Footer({ onNavigate, metServices }) {
           </ul>
         </div>
       </footer>
+      <div className="flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 px-[1.5rem] py-[1rem] w-full bg-[#02102e]">
+        <h6 className="text-[#FFFFFF99] text-[0.8rem] font-[400]">
+          © Copyrights {currentYear} All rights reserved{" "}
+          <Link href="/" className="underline font-semibold">
+            meteoriQs Technologies Pvt Ltd
+          </Link>{" "}
+        </h6>
+        <ul className="flex gap-4">
+          <li>
+            <Link
+              href="/privacy-policy"
+              className="text-[#FFFFFF99] text-[0.8rem] font-[400]"
+            >
+              Privacy Policy
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/terms-and-conditions"
+              className="text-[#FFFFFF99] text-[0.8rem] font-[400]"
+            >
+              Terms & Conditions
+            </Link>
+          </li>
+        </ul>
+      </div>
     </>
   );
 }

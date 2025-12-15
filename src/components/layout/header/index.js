@@ -30,10 +30,11 @@ export default function Header({ onNavigate, industries }) {
 
   const handleClick = (e, sectionKey) => {
     e.preventDefault();
+    setIsMenuOpen(false); // ✅ ALWAYS CLOSE MENU FIRST
     if (pathname !== "/") {
       router.push("/?scrollTo=" + sectionKey);
     } else {
-      setIsMenuOpen(false); // Close the menu after clicking
+      // setIsMenuOpen(false); // Close the menu after clicking
       if (onNavigate) onNavigate(sectionKey);
     }
 
@@ -42,8 +43,12 @@ export default function Header({ onNavigate, industries }) {
   useEffect(() => {
     if (scrollTo && pathname === "/") {
       if (onNavigate) onNavigate(scrollTo);
+      setIsMenuOpen(false); // ✅ CLOSE AFTER SCROLL ALSO
     }
   }, [scrollTo, pathname, onNavigate]);
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
   // const menuItems = null;
   const menuItems = [
     { title: "About US", key: "about", url: "/", target: "_self" },
@@ -55,6 +60,7 @@ export default function Header({ onNavigate, industries }) {
   return (
     <>
       <Navbar
+        isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         className="bg-[#ffffff] backdrop-blur-sm relative fixed top-0 z-50 w-full border-0 shadow-none"
         classNames={{

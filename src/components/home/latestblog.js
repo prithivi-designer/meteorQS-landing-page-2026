@@ -3,6 +3,7 @@ import { forwardRef } from "react";
 import { Card, CardHeader, CardBody } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
+import dayjs from "dayjs";
 
 // export default function LatestPosts({ blogs }) {
 const LatestPosts = forwardRef(({ sectionRef, blogs }, ref) => {
@@ -17,14 +18,11 @@ const LatestPosts = forwardRef(({ sectionRef, blogs }, ref) => {
           </h2>
 
           {/* Cards Grid */}
-          {blogs?.map((blog) => {
-            const cover = blog.fields.coverImage;
-            return (
-              <div
-                className="grid gap-8 sm:grid-cols-2 md:grid-cols-3"
-                key={blog?.sys?.id}
-              >
-                <Link href={`/blogs/${blog.fields.slug}`}>
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+            {blogs?.map((blog) => {
+              const cover = blog.fields.coverImage;
+              return (
+                <Link href={`/blogs/${blog.fields.slug}`} key={blog?.sys?.id}>
                   <Card
                     key={blog?.sys?.id}
                     className="latestBlog rounded-2xl overflow-hidden bg-[#0c1b3a] border border-gray-700"
@@ -50,7 +48,8 @@ const LatestPosts = forwardRef(({ sectionRef, blogs }, ref) => {
                         {blog.fields.title}
                       </h3>
                       <span className="text-sm text-gray-400">
-                        {blog.fields.date}
+                        {/* {blog.fields.date} */}
+                        {dayjs(blog.fields.date).format(" MM-DD-YYYY")}
                       </span>
                     </CardHeader>
 
@@ -61,9 +60,9 @@ const LatestPosts = forwardRef(({ sectionRef, blogs }, ref) => {
                     </CardBody>
                   </Card>
                 </Link>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </>

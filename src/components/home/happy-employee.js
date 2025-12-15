@@ -23,10 +23,7 @@ const imageList = [image1, image2, image3, image4, image5, image6];
 const HappyCustomers = forwardRef(
   ({ happyEmpSec, happyEmpHeading, happyEmpParas }, ref) => {
     return (
-      <div
-        className="min-h-screen bg-[#0c1b3a] text-white px-6 py-16"
-        ref={happyEmpSec}
-      >
+      <div className=" bg-[#0c1b3a] text-white px-6 py-16" ref={happyEmpSec}>
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="grid md:grid-cols-2 gap-6 items-center mb-12">
@@ -69,7 +66,7 @@ const HappyCustomers = forwardRef(
           </div>
 
           {/* Client Mapping Section */}
-          <div className="text-center">
+          {/* <div className="text-center">
             <h3 className="text-2xl font-semibold mb-6">Client Mapping</h3>
             <Card className="bg-white rounded-2xl p-4 mx-auto max-w-3xl ClientMapImage">
               <Image
@@ -80,7 +77,7 @@ const HappyCustomers = forwardRef(
                 className="rounded-lg object-contain w-full "
               />
             </Card>
-          </div>
+          </div> */}
         </div>
       </div>
     );

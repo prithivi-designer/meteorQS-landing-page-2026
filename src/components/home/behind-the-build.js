@@ -35,10 +35,10 @@ const buildData = [
     image: support,
   },
 ];
-const BehindTheBuild = forwardRef(({ sectionRef }, ref) => {
+// const BehindTheBuild = forwardRef(() => {
+const BehindTheBuild = () => {
   return (
     <>
-      <div ref={sectionRef}></div>
       <section className="px-[1.5rem] py-[2.5rem] relative w-full flex flex-col gap-[1rem] justify-center items-center bg-[#0A142F]">
         <div className="sec-header flex flex-col justify-center items-center">
           <h1 className="text-[1.5rem] md:text-[2.5rem] font-[600] text-[#ffffff] leading-[1.3] mb-[0.5rem]">
@@ -82,6 +82,6 @@ const BehindTheBuild = forwardRef(({ sectionRef }, ref) => {
       </section>
     </>
   );
-});
+};
 
 export default BehindTheBuild;

@@ -127,9 +127,9 @@ const TechStack = () => {
             classNames={{
               tabWrapper: "w-full",
               tabList:
-                "bg-transparent p-2 rounded-xl shadow-md flex-wrap sm:flex-nowrap",
+                "bg-transparent p-2 rounded-xl shadow-md flex-wrap sm:flex-nowrap ",
               cursor: "bg-[#ffffff]",
-              tab: "text-gray-600 data-[selected=true]:text-[#052460] font-medium rounded-lg transition-all duration-300 hover:bg-transparent",
+              tab: "text-gray-600 data-[selected=true]:text-[#052460] font-medium rounded-lg transition-all duration-300 hover:bg-transparent text-[1.15rem] h-[3rem]",
               tabContent: "group-data-[selected=true]:text-[#052460]",
               base: "gap-4",
               panel:
@@ -140,13 +140,13 @@ const TechStack = () => {
               <Tab key={tab?.key} title={tab?.title}>
                 <Card className="bg-transparent w-full h-full shadow-none">
                   <CardBody className="flex justify-center items-center w-full h-full">
-                    <div className="flex flex-wrap gap-4 w-full h-full items-center justify-evenly px-[1rem] py-[2rem]">
+                    <div className="flex flex-wrap gap-4 w-full h-full items-center justify-start px-[1rem] py-[2rem]">
                       {tab?.techImages?.map((img, idx) => (
                         <div key={idx} className="w-[calc(25%-1rem)]">
                           <Image
                             src={img}
                             alt={`tech-${idx}`}
-                            className="h-[4rem] w-fit object-contain"
+                            className="h-[6rem] w-fit object-contain"
                           />
                         </div>
                       ))}
