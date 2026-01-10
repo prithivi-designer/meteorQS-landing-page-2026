@@ -10,7 +10,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["images.ctfassets.net", "localhost"],
+    domains: ["images.ctfassets.net", "localhost", "images.unsplash.com", "plus.unsplash.com"],
   },
   webpack(config) {
     config.experiments = { topLevelAwait: true, ...config.experiments };

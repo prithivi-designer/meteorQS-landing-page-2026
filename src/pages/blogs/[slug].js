@@ -6,7 +6,33 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import dayjs from "dayjs";
 
-export async function getServerSideProps(context) {
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsBlog",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }))
+      .filter((path) => path.params.slug);
+
+    return {
+      paths,
+      fallback: "blocking",
+    };
+  } catch (error) {
+    console.error("Error fetching blog paths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+}
+
+export async function getStaticProps(context) {
   const { slug } = context.params;
 
   try {
@@ -22,24 +48,31 @@ export async function getServerSideProps(context) {
     }
 
     // Fetch latest blogs for sidebar / latest posts
-    const resBlogs = await client.getEntries({
-      content_type: "meteoriqsBlog",
-      order: "-fields.date",
-    });
+    const [resBlogs, resMeteoriqsServices, resIndustries] = await Promise.all([
+      client.getEntries({
+        content_type: "meteoriqsBlog",
+        order: "-fields.date",
+      }),
+      client.getEntries({ content_type: "meteoriqsServices" }),
+      client.getEntries({ content_type: "meteoriqsIndustries" }),
+    ]);
 
     return {
       props: {
         blog: res.items[0],
         blogs: resBlogs.items.filter((b) => b.fields?.slug),
+        metServices: resMeteoriqsServices.items,
+        industries: resIndustries.items || [],
       },
+      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching blog:", error);
-    return { notFound: true };
+    return { notFound: true, revalidate: 60 };
   }
 }
 
-export default function BlogDetail({ blog, blogs }) {
+export default function BlogDetail({ blog, blogs, metServices, industries }) {
   const { title, content, date, coverImage, section } = blog.fields;
 
   const options = {
@@ -72,7 +105,7 @@ export default function BlogDetail({ blog, blogs }) {
 
   return (
     <>
-      <Header />
+      <Header industries={industries} />
 
       <div className="py-[8rem] px-[1rem] max-w-[60rem] mx-auto">
         <h1 className="text-3xl font-bold mb-4">{title}</h1>
@@ -158,7 +191,7 @@ export default function BlogDetail({ blog, blogs }) {
 
       {blogs?.length > 0 && <LatestPosts blogs={blogs} />}
 
-      <Footer />
+      <Footer metServices={metServices} />
     </>
   );
 }

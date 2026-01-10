@@ -1,15 +1,42 @@
-import React from "react";
+
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { client } from "@/lib/contentful";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
-import ClientMapping from "@/components/home/client-mapping";
+import ClientAcrossGlobe from "@/components/home/client-acros-globe";
 import LatestPosts from "@/components/home/latestblog";
 import CaseStudies from "@/components/home/casestudy";
 
-export async function getServerSideProps(context) {
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsIndustries",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }))
+      .filter((path) => path.params.slug);
+
+    return {
+      paths,
+      fallback: "blocking",
+    };
+  } catch (error) {
+    console.error("Error fetching industry paths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+}
+
+export async function getStaticProps(context) {
   const { slug } = context.params;
+  console.log(`Fetching Industry Slug: ${slug}`);
 
   try {
     const [
@@ -29,6 +56,8 @@ export async function getServerSideProps(context) {
       client.getEntries({ content_type: "meteoriqsServices" }),
     ]);
 
+    console.log(`Found Industry items for slug '${slug}': ${resIndustry.items.length}`);
+
     if (!resIndustry.items.length) {
       return { notFound: true }; // 404 if industry deleted
     }
@@ -41,10 +70,11 @@ export async function getServerSideProps(context) {
         casestudies: resCasestudy.items,
         metServices: resServices.items,
       },
+      revalidate: 60,
     };
   } catch (error) {
     console.error("Contentful fetch error:", error);
-    return { notFound: true };
+    return { notFound: true, revalidate: 60 };
   }
 }
 
@@ -89,26 +119,31 @@ export default function IndustryDetail({
     <>
       <Header industries={industries} />
 
-      <section className="py-[4rem] px-[0rem] mx-auto">
+      <section className="py-[4rem] px-[0rem] mx-auto bg-[#0A142F] min-h-screen">
         {bannerImage?.fields?.file?.url && (
-          <img
-            src={`https:${bannerImage.fields.file.url}`}
-            alt={bannerImage.fields.title}
-            className="mb-6 w-full object-cover max-h-[30rem]"
-          />
+          <div className="relative w-full h-[50dvh] mb-8">
+            <img
+              src={`https:${bannerImage.fields.file.url}`}
+              alt={bannerImage.fields.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
         )}
 
-        <h1 className="lg:text-[3.5rem] md:text-[2.5rem] text-[2rem] font-bold mb-4 text-center">
-          {title}
-        </h1>
+        <div className="container mx-auto px-6">
+          <h1 className="text-white lg:text-[3.5rem] md:text-[2.5rem] text-[2rem] font-bold mb-8 text-center">
+            {title}
+          </h1>
 
-        <div className="prose max-w-[60rem] mx-auto text-center">
-          {documentToReactComponents(industriesContent, options)}
+          <div className="prose prose-invert prose-lg max-w-[60rem] mx-auto text-gray-300 text-center">
+            {documentToReactComponents(industriesContent, options)}
+          </div>
         </div>
       </section>
 
       <LatestPosts blogs={blogs} />
-      <ClientMapping />
+      <ClientAcrossGlobe />
       <CaseStudies casestudies={casestudies} />
       <Footer metServices={metServices} />
     </>

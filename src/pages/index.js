@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import dynamic from "next/dynamic";
@@ -11,16 +11,8 @@ const LandingPg = dynamic(() => import("@/components/home"), {
   ssr: false,
 });
 
-export async function getServerSideProps({ res }) {
+export async function getStaticProps() {
   try {
-    // 🚫 Disable all caching (important for production freshness)
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate"
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-
     const [
       resBlogs,
       resCasestudy,
@@ -62,9 +54,10 @@ export async function getServerSideProps({ res }) {
         industries: resIndustries.items || [],
         metServices: resServices.items || [],
       },
+      revalidate: 60,
     };
   } catch (error) {
-    console.error("❌ Contentful SSR Error:", error);
+    console.error("Error fetching Contentful data:", error);
 
     return {
       props: {
@@ -73,6 +66,7 @@ export async function getServerSideProps({ res }) {
         industries: [],
         metServices: [],
       },
+      revalidate: 60,
     };
   }
 }
@@ -86,6 +80,7 @@ export default function Home({ blogs, casestudies, industries, metServices }) {
   const servicesSectionRef = useRef(null);
   const blogSectionRef = useRef(null);
   const faqRef = useRef(null);
+  const contactSectionRef = useRef(null);
 
   const sectionRefs = {
     home: homeSectionRef,
@@ -95,6 +90,7 @@ export default function Home({ blogs, casestudies, industries, metServices }) {
     services: servicesSectionRef,
     blog: blogSectionRef,
     faq: faqRef,
+    contact: contactSectionRef,
   };
 
   const handleScrollTo = (section) => {

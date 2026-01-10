@@ -33,7 +33,7 @@ const quickLinkMenu = [
   { title: "Case Studies", key: "caseStudies", url: "/", target: "_self" },
   { title: "Blogs", key: "blog", url: "/", target: "_self" },
   // { title: "Careers", key: "careers", url: "/", target: "_self" },
-  // { title: "Contact Us", key: "contactus", url: "/", target: "_self" },
+  { title: "Contact Us", key: "contact", url: "/", target: "_self" },
   { title: "FAQ's", key: "faq", url: "/", target: "_self" },
 ];
 const FooterMenuList = ({ menuList, heading, setIsModalOpen, handleClick }) => {
@@ -84,7 +84,7 @@ export default function Footer({ onNavigate, metServices }) {
       >
         <div className="flex flex-wrap w-full gap-[1.2rem] justify-between max-w-[80rem] mx-auto">
           <div
-            className="flex flex-col gap-[1rem] w-full lg:w-[calc(40%-1.2rem)]"
+            className="flex flex-col gap-[1rem] w-full lg:w-[calc(30%-1.2rem)]"
             data-aos="fade-up"
           >
             <Image
@@ -100,7 +100,7 @@ export default function Footer({ onNavigate, metServices }) {
             </h2>
           </div>
           <div
-            className="flex flex-col gap-[1rem] w-full xsm:w-[calc(50%-1.2rem)] sm:w-[calc(33.33%-1.2rem)] lg:w-[calc(20%-1.2rem)]"
+            className="flex flex-col gap-[1rem] w-full xsm:w-[calc(50%-1.2rem)] sm:w-[calc(33.33%-1.2rem)] lg:w-[calc(15%-1.2rem)]"
             data-aos="fade-up"
           >
             {/* <FooterMenuList
@@ -141,7 +141,7 @@ export default function Footer({ onNavigate, metServices }) {
           </div>
 
           <div
-            className="flex flex-col gap-[1rem] w-full xsm:w-[calc(50%-1.2rem)] sm:w-[calc(33.33%-1.2rem)] lg:w-[calc(20%-1.2rem)]"
+            className="flex flex-col gap-[1rem] w-full xsm:w-[calc(50%-1.2rem)] sm:w-[calc(33.33%-1.2rem)] lg:w-[calc(15%-1.2rem)]"
             data-aos="fade-up"
           >
             <FooterMenuList
@@ -150,48 +150,68 @@ export default function Footer({ onNavigate, metServices }) {
               handleClick={handleClick}
             />
           </div>
+          <div
+            className="flex flex-col gap-[1rem] w-full xsm:w-[calc(50%-1.2rem)] sm:w-[calc(33.33%-1.2rem)] lg:w-[calc(30%-1.2rem)]"
+            data-aos="fade-up"
+          >
+
+
+            <h5 className="text-[#FFFFFF] text-[0.9rem] xl:text-[0.9rem] font-[400] leading-[1.4]">
+              MeteoriQs Towers, <br />
+              1B, Ground Floor Business Center, <br />
+              SheshadhriNagar, <br />
+              Nedungundram, <br />
+              New Perungalathur, <br />
+              Chennai-127, India
+            </h5>
+            <ul className="text-[0.85rem] leading-[1.3] font-[500] list-none mt-[1rem]">
+              <li className="mb-[0.5rem] flex">
+                <span className="w-[4rem] block">GSTIN:</span> 33AAQCM7329B1ZH
+              </li>
+              <li className="mb-[0.5rem] flex">
+                <span className="w-[4rem] block">CIN:</span>{" "}
+                U62020TN2023PTC159459
+              </li>
+              <li className="mb-[0.5rem] flex">
+                <span className="w-[4rem] block">TAN:</span> CHEM27420B
+              </li>
+            </ul>
+            <ul className="flex gap-4 text-white text-[1.1rem] mt-[1rem]">
+              <li>
+                <Link
+                  href="https://www.facebook.com/meteoriQs?mibextid=kFxxJD"
+                  target="_blank"
+                >
+                  <FaFacebook />
+                </Link>
+              </li>
+              <li>
+                <Link href="https://x.com/MeteoriQs" target="_blank">
+                  <FaTwitter />
+                </Link>
+              </li>
+              <li>
+                <Link href="https://www.instagram.com/meteoriqs/" target="_blank">
+                  <FaInstagram />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://www.linkedin.com/company/meteoriqs/"
+                  target="_blank"
+                >
+                  <FaLinkedin />
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div
+        {/* <div
           className="flex flex-wrap w-full gap-[1.2rem] justify-between items-center max-w-[80rem] mx-auto"
           data-aos="fade-up"
         >
-          <h5 className="text-[#FFFFFF] text-[0.9rem] xl:text-[0.9rem] font-[400] leading-[1.4]">
-            MeteoriQs Towers, <br />
-            1B, Ground Floor Business Center, <br />
-            SheshadhriNagar, <br />
-            Nedungundram, <br />
-            New Perungalathur, <br />
-            Chennai-127, India
-          </h5>
-          <ul className="flex gap-4 text-white text-[1.1rem] mt-[1rem]">
-            <li>
-              <Link
-                href="https://www.facebook.com/meteoriQs?mibextid=kFxxJD"
-                target="_blank"
-              >
-                <FaFacebook />
-              </Link>
-            </li>
-            <li>
-              <Link href="https://x.com/MeteoriQs" target="_blank">
-                <FaTwitter />
-              </Link>
-            </li>
-            <li>
-              <Link href="https://www.instagram.com/meteoriqs/" target="_blank">
-                <FaInstagram />
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="https://www.linkedin.com/company/meteoriqs/"
-                target="_blank"
-              >
-                <FaLinkedin />
-              </Link>
-            </li>
-          </ul>
-        </div>
+          
+        </div> */}
       </footer>
       <div className="flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 px-[1.5rem] py-[1rem] w-full bg-[#02102e]">
         <h6 className="text-[#FFFFFF99] text-[0.8rem] font-[400]">

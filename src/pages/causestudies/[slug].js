@@ -5,7 +5,33 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import dayjs from "dayjs";
 
-export async function getServerSideProps(context) {
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsCasestudy",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }))
+      .filter((path) => path.params.slug);
+
+    return {
+      paths,
+      fallback: "blocking",
+    };
+  } catch (error) {
+    console.error("Error fetching casestudy paths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+}
+
+export async function getStaticProps(context) {
   const { slug } = context.params;
 
   try {
@@ -18,18 +44,26 @@ export async function getServerSideProps(context) {
       return { notFound: true }; // 404 if deleted
     }
 
+    const [resIndustries, resServices] = await Promise.all([
+      client.getEntries({ content_type: "meteoriqsIndustries" }),
+      client.getEntries({ content_type: "meteoriqsServices" }),
+    ]);
+
     return {
       props: {
         casestudy: res.items[0],
+        industries: resIndustries.items || [],
+        metServices: resServices.items || [],
       },
+      revalidate: 60,
     };
   } catch (error) {
     console.error("Contentful error:", error);
-    return { notFound: true };
+    return { notFound: true, revalidate: 60 };
   }
 }
 
-export default function CaseStudyDetail({ casestudy }) {
+export default function CaseStudyDetail({ casestudy, industries, metServices }) {
   const { title, content, date, coverImage, section } = casestudy.fields;
 
   const options = {
@@ -62,7 +96,7 @@ export default function CaseStudyDetail({ casestudy }) {
 
   return (
     <>
-      <Header />
+      <Header industries={industries} />
 
       <div className="py-[8rem] px-[1rem] max-w-[60rem] mx-auto">
         <h1 className="text-3xl font-bold mb-4">{title}</h1>
@@ -135,7 +169,7 @@ export default function CaseStudyDetail({ casestudy }) {
         })}
       </div>
 
-      <Footer />
+      <Footer metServices={metServices} />
     </>
   );
 }

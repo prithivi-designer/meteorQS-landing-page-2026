@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect } from "react";
-import { Tabs, Tab, Card, CardBody } from "@heroui/react";
+import React, { useState } from "react";
+import { cn } from "@/lib/utils";
 
 // Import images
 import frontimage1 from "@/assets/images/techStack/front-image1.png";
@@ -38,124 +38,137 @@ import almlimage2 from "@/assets/images/techStack/alml-image2.png";
 import almlimage3 from "@/assets/images/techStack/alml-image3.png";
 import almlimage4 from "@/assets/images/techStack/alml-image4.png";
 
-// 🔹 Config: Define tabs + images
+// Config: Define tabs + images with names for tooltips
 const techTabs = [
   {
     key: "frontend",
     title: "Frontend",
-    techImages: [frontimage1, frontimage2, frontimage3, frontimage4],
+    items: [
+      { src: frontimage1, name: "React" },
+      { src: frontimage2, name: "Angular" },
+      { src: frontimage3, name: "Vue.js" },
+      { src: frontimage4, name: "Next.js" },
+    ],
   },
   {
     key: "backend",
     title: "Backend",
-    techImages: [
-      backimage1,
-      backimage2,
-      backimage3,
-      backimage4,
-      backimage5,
-      backimage6,
-    ],
-  },
-  {
-    key: "microsoft",
-    title: "Microsoft",
-    techImages: [
-      devopsimage1,
-      devopsimage2,
-      devopsimage3,
-      devopsimage4,
-      devopsimage5,
-      devopsimage6,
-      devopsimage7,
-      devopsimage8,
-      devopsimage9,
-      devopsimage10,
-      devopsimage11,
+    items: [
+      { src: backimage1, name: "Node.js" },
+      { src: backimage2, name: "Python" },
+      { src: backimage3, name: "Java" },
+      { src: backimage4, name: "PHP" },
+      { src: backimage5, name: "Go" },
+      { src: backimage6, name: ".NET" },
     ],
   },
   {
     key: "mobile",
     title: "Mobile",
-    techImages: [mobileimage1, mobileimage2, mobileimage3, mobileimage4],
+    items: [
+      { src: mobileimage1, name: "iOS" },
+      { src: mobileimage2, name: "Android" },
+      { src: mobileimage3, name: "Flutter" },
+      { src: mobileimage4, name: "React Native" },
+    ],
+  },
+  {
+    key: "microsoft",
+    title: "Microsoft",
+    items: [
+      { src: devopsimage1, name: "Azure" },
+      { src: devopsimage2, name: "SharePoint" },
+      { src: devopsimage3, name: "Power BI" },
+      { src: devopsimage4, name: "Dynamics 365" },
+      { src: devopsimage5, name: "Teams" },
+      { src: devopsimage6, name: "Office 365" },
+      { src: devopsimage7, name: "Yammer" },
+      { src: devopsimage8, name: "OneDrive" },
+      { src: devopsimage9, name: "Outlook" },
+      { src: devopsimage10, name: "Exchange" },
+      { src: devopsimage11, name: "OneNote" },
+    ],
   },
   {
     key: "aiml",
     title: "AI & ML",
-    techImages: [almlimage1, almlimage2, almlimage3, almlimage4],
+    items: [
+      { src: almlimage1, name: "TensorFlow" },
+      { src: almlimage2, name: "PyTorch" },
+      { src: almlimage3, name: "OpenAI" },
+      { src: almlimage4, name: "Keras" },
+    ],
   },
 ];
 
-// 🔹 All images (you can customize per tab later if needed)
-// const techImages = [frontimage1, frontimage2, frontimage3, frontimage4];
-
 const TechStack = () => {
-  const [selected, setSelected] = React.useState("frontend");
-  const [placement, setPlacement] = React.useState("start"); // default desktop
-
-  useEffect(() => {
-    const handleResize = () => {
-      setPlacement(window.innerWidth < 768 ? "top" : "start"); // mobile vs desktop
-    };
-
-    handleResize(); // initial check
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const [activeTab, setActiveTab] = useState("frontend");
 
   return (
-    <section className="px-[1.5rem] py-[2.5rem] relative w-full flex flex-col gap-[1rem] justify-center items-center bg-[#0A142F]">
-      {/* Header */}
-      <div className="sec-header flex flex-col justify-center items-center">
-        <h1 className="text-[1.1rem] md:text-[1.8rem] font-[600] text-[#ffffff] leading-[1.3] mb-[1.5rem] text-center">
-          Our tech stack addresses <br />
-          complex challenges across sectors.
-        </h1>
-      </div>
+    <section className="bg-[#0A142F] py-20 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+            Our Tech Stack
+          </h2>
+          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+            Our tech stack addresses complex challenges across sectors, utilizing the latest frameworks and tools to deliver robust solutions.
+          </p>
+        </div>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-[0.5rem] max-w-[80rem]">
-        <div className="flex justify-start w-full max-w-[50rem] flex-col">
-          <Tabs
-            aria-label="Options"
-            selectedKey={selected}
-            onSelectionChange={setSelected}
-            placement={placement}
-            variant="solid"
-            color="primary"
-            radius="lg"
-            classNames={{
-              tabWrapper: "w-full",
-              tabList:
-                "bg-transparent p-2 rounded-xl shadow-md flex-wrap sm:flex-nowrap ",
-              cursor: "bg-[#ffffff]",
-              tab: "text-gray-600 data-[selected=true]:text-[#052460] font-medium rounded-lg transition-all duration-300 hover:bg-transparent text-[1.15rem] h-[3rem]",
-              tabContent: "group-data-[selected=true]:text-[#052460]",
-              base: "gap-4",
-              panel:
-                "bg-[linear-gradient(90deg,rgba(16,147,255,0.07)_0%,rgba(16,147,255,0)_48.08%,rgba(16,147,255,0.07)_97.6%)] lg:w-[40rem] md:w-[30rem] sm:w-full rounded-xl",
-            }}
-          >
+        <div className="flex flex-col md:flex-row gap-8 bg-[#0c1b3a]/50 p-6 rounded-3xl border border-white/5">
+          {/* Tabs Navigation */}
+          <div className="w-full md:w-1/4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
             {techTabs.map((tab) => (
-              <Tab key={tab?.key} title={tab?.title}>
-                <Card className="bg-transparent w-full h-full shadow-none">
-                  <CardBody className="flex justify-center items-center w-full h-full">
-                    <div className="flex flex-wrap gap-4 w-full h-full items-center justify-start px-[1rem] py-[2rem]">
-                      {tab?.techImages?.map((img, idx) => (
-                        <div key={idx} className="w-[calc(25%-1rem)]">
-                          <Image
-                            src={img}
-                            alt={`tech-${idx}`}
-                            className="h-[6rem] w-fit object-contain"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </CardBody>
-                </Card>
-              </Tab>
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={cn(
+                  "px-6 py-4 rounded-xl text-left transition-all duration-300 whitespace-nowrap flex items-center justify-between group",
+                  activeTab === tab.key
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
+                    : "bg-transparent text-gray-400 hover:bg-white/5 hover:text-white"
+                )}
+              >
+                <span className="text-lg font-medium">{tab.title}</span>
+                {activeTab === tab.key && (
+                  <div className="w-2 h-2 rounded-full bg-white animate-pulse hidden md:block" />
+                )}
+              </button>
             ))}
-          </Tabs>
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 bg-[#112242] rounded-2xl p-6">
+            {techTabs.map((tab) => (
+              <div
+                key={tab.key}
+                className={cn(
+                  "grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-8 md:gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500",
+                  activeTab === tab.key ? "grid" : "hidden"
+                )}
+              >
+                {tab.items.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative flex items-center justify-center p-4 rounded-xl bg-[#0A142F] border border-white/5 hover:border-blue-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 aspect-square"
+                  >
+                    <Image
+                      src={item.src}
+                      alt={item.name}
+                      className="w-16 h-16 object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                    />
+
+                    {/* Tooltip */}
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-white text-black text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap shadow-lg">
+                      {item.name}
+                      <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

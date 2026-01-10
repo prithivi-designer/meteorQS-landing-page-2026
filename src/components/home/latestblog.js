@@ -1,71 +1,36 @@
 // app/latest-posts/page.tsx
-import { forwardRef } from "react";
-import { Card, CardHeader, CardBody } from "@heroui/react";
-import Image from "next/image";
-import Link from "next/link";
-import dayjs from "dayjs";
+"use client";
 
-// export default function LatestPosts({ blogs }) {
-const LatestPosts = forwardRef(({ sectionRef, blogs }, ref) => {
+import { forwardRef } from "react";
+import { BlogGallery } from "@/components/ui/blog-gallery";
+
+const LatestPosts = forwardRef(({ sectionRef, blogs = [] }, ref) => {
+  // Map Contentful data to GalleryItem format
+  const galleryItems = blogs.map((blog) => {
+    const cover = blog?.fields?.coverImage;
+    const imageUrl = cover?.fields?.file?.url ? `https:${cover.fields.file.url}` : "";
+
+    return {
+      id: blog?.sys?.id,
+      title: blog?.fields?.title || "Untitled Post",
+      summary: blog?.fields?.description || "",
+      url: `/blogs/${blog?.fields?.slug}`,
+      image: imageUrl || "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?auto=format&fit=crop&q=80", // Fallback
+    };
+  });
+
   return (
     <>
       <div ref={sectionRef}></div>
-      <div className="bg-[#0A142F] text-white px-6 py-16">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Title */}
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Latest Posts
-          </h2>
-
-          {/* Cards Grid */}
-          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-            {blogs?.map((blog) => {
-              const cover = blog.fields.coverImage;
-              return (
-                <Link href={`/blogs/${blog.fields.slug}`} key={blog?.sys?.id}>
-                  <Card
-                    key={blog?.sys?.id}
-                    className="latestBlog rounded-2xl overflow-hidden bg-[#0c1b3a] border border-gray-700"
-                  >
-                    {/* Image */}
-
-                    {cover && cover?.fields?.file?.url && (
-                      <div className="relative w-full h-48">
-                        <Image
-                          src={`https:${cover?.fields?.file?.url}`}
-                          alt={cover.fields.title || blog.fields.title}
-                          className="rounded-lg object-cover w-full h-48"
-                          width={400}
-                          height={250}
-                        />
-                      </div>
-                    )}
-                    {/* </div> */}
-
-                    {/* Card Content */}
-                    <CardHeader className="flex flex-col items-center text-center px-4 pt-4">
-                      <h3 className="text-lg text-[#F8FAFC] font-semibold">
-                        {blog.fields.title}
-                      </h3>
-                      <span className="text-sm text-gray-400">
-                        {/* {blog.fields.date} */}
-                        {dayjs(blog.fields.date).format(" MM-DD-YYYY")}
-                      </span>
-                    </CardHeader>
-
-                    <CardBody className="px-4 pb-4">
-                      <p className="text-sm text-[#ffffff] text-center">
-                        {blog.fields.description}
-                      </p>
-                    </CardBody>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+      <div className="bg-[#0A142F]">
+        <BlogGallery
+          heading="Latest Insights"
+          items={galleryItems}
+          demoUrl="/blogs"
+        />
       </div>
     </>
   );
 });
+
 export default LatestPosts;

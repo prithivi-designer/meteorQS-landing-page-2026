@@ -5,7 +5,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { client } from "@/lib/contentful";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     const [resIndustries, resServices] = await Promise.all([
       client.getEntries({ content_type: "meteoriqsIndustries" }),
@@ -17,6 +17,7 @@ export async function getServerSideProps() {
         industries: resIndustries.items,
         metServices: resServices.items,
       },
+      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching Contentful data:", error);
@@ -25,6 +26,7 @@ export async function getServerSideProps() {
         industries: [],
         metServices: [],
       },
+      revalidate: 60,
     };
   }
 }

@@ -61,7 +61,7 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     const handleStart = () => setLoading(true);
     const handleComplete = () => {
-      setTimeout(() => setLoading(false), 800); // Delay to show animation
+      setTimeout(() => setLoading(false), 2000); // Delay to show animation
     };
 
     router.events.on("routeChangeStart", handleStart);
@@ -80,7 +80,10 @@ export default function App({ Component, pageProps }) {
         <SEO title={"Meteoriqs"} description={"Meteoriqs"} />
 
         {loading && <PageLoader onComplete={handleLoaderComplete} />}
-        <Component {...pageProps} />
+        {/* Hide content until loading is complete to prevent "flash" of previous page or unstyled content */}
+        <div style={{ opacity: loading ? 0 : 1, transition: "opacity 0.3s ease-in-out" }}>
+          <Component {...pageProps} />
+        </div>
       </HeroUIProvider>
     </>
   );

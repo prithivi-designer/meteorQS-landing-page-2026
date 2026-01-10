@@ -4,16 +4,17 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import { useIsomorphicLayoutEffect } from "@/util/useIsomorphicLayoutEffect";
 import HeroSection from "./hero-section";
 import TrustBy from "./trustbyComp";
-import ClientAcrossGlobe from "./client-acros-globe";
-import BehindTheBuild from "./behind-the-build";
+import AboutUs from "./about-us";
+import TechOfferings from "./tech-offerings";
 import GlobalClients from "./global-client";
 import TechStack from "./techstack";
 import FAQPage from "./faq";
 import CaseStudies from "./casestudy";
 import Testimonials from "./testimonial";
 import LatestPosts from "./latestblog";
-import ClientMapping from "./client-mapping";
+import ClientAcrossGlobe from "./client-acros-globe";
 import HappyCustomers from "./happy-employee";
+import ContactSection from "./contact-section";
 
 export default function LandingPg({
   blogs,
@@ -32,8 +33,7 @@ export default function LandingPg({
 
   // ClientAcrossGlobe refs
   const globeSec = useRef(null);
-  const globeHeading = useRef(null);
-  const globeParas = useRef([]);
+
 
   // Happy Employees refs
   const happyEmpSec = useRef(null);
@@ -48,24 +48,50 @@ export default function LandingPg({
     const ctx = gsap.context(() => {
       // On-load animations
 
-      gsap.fromTo(
-        opncirHeroHeading.current,
-        { opacity: 0, x: 100 },
-        { opacity: 1, x: 0, duration: 1.2, delay: 1.2, ease: "power3.out" }
-      );
+      // On-load animations
 
-      gsap.fromTo(
-        [opncirHeroDescription.current, opncirHeroButton.current],
-        { opacity: 0, scale: 1.1, y: 100 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 1,
-          delay: 1,
-          ease: "power3.out",
-        }
-      );
+      // Desktop Initial Animation
+      mm.add("(min-width: 768px)", () => {
+        gsap.fromTo(
+          opncirHeroHeading.current,
+          { opacity: 0, x: 100 },
+          { opacity: 1, x: 0, duration: 1.2, delay: 0.5, ease: "power3.out" }
+        );
+
+        gsap.fromTo(
+          [opncirHeroDescription.current, opncirHeroButton.current],
+          { opacity: 0, scale: 1.1, y: 100 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.8,
+            ease: "power3.out",
+          }
+        );
+      });
+
+      // Mobile Initial Animation (Simpler, Faster, No X-shift)
+      mm.add("(max-width: 767px)", () => {
+        gsap.fromTo(
+          opncirHeroHeading.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" }
+        );
+
+        gsap.fromTo(
+          [opncirHeroDescription.current, opncirHeroButton.current],
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: 0.4,
+            ease: "power3.out",
+          }
+        );
+      });
 
       // Scroll animations (desktop only)
       mm.add("(min-width: 768px)", () => {
@@ -130,58 +156,8 @@ export default function LandingPg({
           }
         );
 
-        // === CLIENT ACROSS GLOBE ===
-        gsap.fromTo(
-          globeHeading.current,
-          { opacity: 0, y: 80 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 2.5,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: globeSec.current,
-              start: "top 75%",
-              scrub: true,
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
 
-        gsap.fromTo(
-          globeParas.current,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 2,
-            stagger: 0.3,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: globeSec.current,
-              start: "top 70%",
-              scrub: true,
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-        gsap.fromTo(
-          ".behindBuild",
-          { opacity: 0.05, y: -100 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 2.5,
-            stagger: 0.3,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".behindBuild",
-              start: "top 100%",
-              scrub: true,
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
+        // Tech Offerings animation is now handled internally by the component (Framer Motion)
         gsap.fromTo(
           ".globalClient",
           { opacity: 0, y: 100 },
@@ -270,24 +246,8 @@ export default function LandingPg({
             },
           }
         );
-        gsap.fromTo(
-          ".ClientMapImage",
-          { opacity: 0, y: 0, scale: 0.8 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1.5,
-            stagger: 0.3,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".ClientMapImage",
-              start: "top 100%",
-              scrub: true,
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
+
+
       });
     });
 
@@ -311,13 +271,9 @@ export default function LandingPg({
         opncirHeroButton={opncirHeroButton}
       />
       <TrustBy trustedBySection={trustedBySection} />
-      <ClientAcrossGlobe
-        sectionRef={sectionRefs?.about}
-        globeSec={globeSec}
-        globeHeading={globeHeading}
-        globeParas={globeParas}
-      />
-      <BehindTheBuild />
+      <AboutUs />
+
+      <TechOfferings />
       <GlobalClients
         sectionRef={sectionRefs?.services}
         metServices={metServices}
@@ -330,12 +286,15 @@ export default function LandingPg({
         happyEmpHeading={happyEmpHeading}
         happyEmpParas={happyEmpParas}
       />
-      <ClientMapping happyEmpSec={happyEmpSec} />
+      <ClientAcrossGlobe
+        globeSec={globeSec}
+      />
       <CaseStudies
         sectionRef={sectionRefs?.caseStudies}
         casestudies={casestudies}
       />
       <FAQPage sectionRef={sectionRefs?.faq} />
+      <ContactSection sectionRef={sectionRefs?.contact} />
     </main>
   );
 }

@@ -1,11 +1,39 @@
-import React from "react";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { client } from "@/lib/contentful";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
+import LatestPosts from "@/components/home/latestblog";
+import ClientAcrossGlobe from "@/components/home/client-acros-globe";
+import ContactSection from "@/components/home/contact-section";
 
-export async function getServerSideProps(context) {
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsServices",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }))
+      .filter((path) => path.params.slug);
+
+    return {
+      paths,
+      fallback: "blocking",
+    };
+  } catch (error) {
+    console.error("Error fetching service paths:", error);
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+}
+
+export async function getStaticProps(context) {
   const { slug } = context.params;
 
   try {
@@ -13,12 +41,14 @@ export async function getServerSideProps(context) {
     const resService = await client.getEntries({
       content_type: "meteoriqsServices",
       "fields.slug": slug,
+      include: 2,
     });
 
-    // Fetch industries & all services
-    const [resIndustries, resServices] = await Promise.all([
+    // Fetch industries, all services, & blogs
+    const [resIndustries, resServices, resBlogs] = await Promise.all([
       client.getEntries({ content_type: "meteoriqsIndustries" }),
       client.getEntries({ content_type: "meteoriqsServices" }),
+      client.getEntries({ content_type: "meteoriqsBlog" }),
     ]);
 
     if (!resService.items.length) {
@@ -30,12 +60,15 @@ export async function getServerSideProps(context) {
         metServicesDetail: resService.items[0],
         industries: resIndustries.items,
         metServices: resServices.items,
+        blogs: resBlogs.items,
       },
+      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching data from Contentful:", error);
     return {
       notFound: true,
+      revalidate: 60,
     };
   }
 }
@@ -44,13 +77,18 @@ export default function MetServicesDetail({
   metServicesDetail,
   industries,
   metServices,
+  blogs,
 }) {
   const { title, servicesContent, bannerImage } = metServicesDetail.fields;
 
   const options = {
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
-        const { file, title } = node.data.target.fields;
+        const fields = node.data.target?.fields;
+        if (!fields?.file?.url) {
+          return null;
+        }
+        const { file, title } = fields;
         return (
           <img
             src={`https:${file.url}`}
@@ -60,7 +98,11 @@ export default function MetServicesDetail({
         );
       },
       [INLINES.ASSET_HYPERLINK]: (node, children) => {
-        const { file, title } = node.data.target.fields;
+        const fields = node.data.target?.fields;
+        if (!fields?.file?.url) {
+          return <span>{children}</span>;
+        }
+        const { file, title } = fields;
         return (
           <a
             href={`https:${file.url}`}
@@ -78,24 +120,32 @@ export default function MetServicesDetail({
   return (
     <>
       <Header industries={industries} />
-      <section className="py-[4rem] px-[0rem] mx-auto">
+      <section className="py-[4rem] px-[0rem] mx-auto bg-[#0A142F] min-h-screen text-white">
         {bannerImage?.fields?.file?.url && (
-          <img
-            src={`https:${bannerImage.fields.file.url}`}
-            alt={bannerImage.fields.title}
-            className="mb-6 w-full object-cover max-h-[30rem] object-center"
-          />
+          <div className="relative w-full h-[50dvh] mb-8">
+            <img
+              src={`https:${bannerImage.fields.file.url}`}
+              alt={bannerImage.fields.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
         )}
 
-        <h1 className="lg:text-[3.5rem] md:text-[2.5rem] text-[2rem] font-bold mb-4 text-center">
-          {title}
-        </h1>
+        <div className="container mx-auto px-6">
+          <h1 className="text-white lg:text-[3.5rem] md:text-[2.5rem] text-[2rem] font-bold mb-8 text-center">
+            {title}
+          </h1>
 
-        <div className="prose max-w-[60rem] mx-auto text-center">
-          {documentToReactComponents(servicesContent, options)}
+          <div className="prose prose-invert prose-lg max-w-[60rem] mx-auto text-gray-300 text-center">
+            {servicesContent && documentToReactComponents(servicesContent, options)}
+          </div>
         </div>
       </section>
 
+      <LatestPosts blogs={blogs} />
+      <ClientAcrossGlobe />
+      <ContactSection />
       <Footer metServices={metServices} />
     </>
   );
