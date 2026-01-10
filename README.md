@@ -1,3 +1,7 @@
+# meteorQS-landing-page-2026
+
+A responsive, animation-rich service landing page built with modern front-end practices, smooth scrolling, parallax effects, and clean UI architecture.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ## Getting Started
