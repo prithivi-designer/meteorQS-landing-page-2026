@@ -8,33 +8,7 @@ import ClientAcrossGlobe from "@/components/home/client-acros-globe";
 import LatestPosts from "@/components/home/latestblog";
 import CaseStudies from "@/components/home/casestudy";
 
-export async function getStaticPaths() {
-  try {
-    const res = await client.getEntries({
-      content_type: "meteoriqsIndustries",
-      select: "fields.slug",
-    });
-
-    const paths = res.items
-      .map((item) => ({
-        params: { slug: item.fields.slug },
-      }))
-      .filter((path) => path.params.slug);
-
-    return {
-      paths,
-      fallback: "blocking",
-    };
-  } catch (error) {
-    console.error("Error fetching industry paths:", error);
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   const { slug } = context.params;
   console.log(`Fetching Industry Slug: ${slug}`);
 
@@ -70,11 +44,10 @@ export async function getStaticProps(context) {
         casestudies: resCasestudy.items,
         metServices: resServices.items,
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error("Contentful fetch error:", error);
-    return { notFound: true, revalidate: 60 };
+    return { notFound: true };
   }
 }
 

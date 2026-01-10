@@ -11,7 +11,7 @@ const LandingPg = dynamic(() => import("@/components/home"), {
   ssr: false,
 });
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   try {
     const [
       resBlogs,
@@ -54,7 +54,6 @@ export async function getStaticProps() {
         industries: resIndustries.items || [],
         metServices: resServices.items || [],
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching Contentful data:", error);
@@ -66,7 +65,6 @@ export async function getStaticProps() {
         industries: [],
         metServices: [],
       },
-      revalidate: 60,
     };
   }
 }

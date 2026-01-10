@@ -7,33 +7,7 @@ import LatestPosts from "@/components/home/latestblog";
 import ClientAcrossGlobe from "@/components/home/client-acros-globe";
 import ContactSection from "@/components/home/contact-section";
 
-export async function getStaticPaths() {
-  try {
-    const res = await client.getEntries({
-      content_type: "meteoriqsServices",
-      select: "fields.slug",
-    });
-
-    const paths = res.items
-      .map((item) => ({
-        params: { slug: item.fields.slug },
-      }))
-      .filter((path) => path.params.slug);
-
-    return {
-      paths,
-      fallback: "blocking",
-    };
-  } catch (error) {
-    console.error("Error fetching service paths:", error);
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   const { slug } = context.params;
 
   try {
@@ -62,13 +36,11 @@ export async function getStaticProps(context) {
         metServices: resServices.items,
         blogs: resBlogs.items,
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching data from Contentful:", error);
     return {
       notFound: true,
-      revalidate: 60,
     };
   }
 }

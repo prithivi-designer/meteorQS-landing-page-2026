@@ -6,33 +6,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import dayjs from "dayjs";
 
-export async function getStaticPaths() {
-  try {
-    const res = await client.getEntries({
-      content_type: "meteoriqsBlog",
-      select: "fields.slug",
-    });
-
-    const paths = res.items
-      .map((item) => ({
-        params: { slug: item.fields.slug },
-      }))
-      .filter((path) => path.params.slug);
-
-    return {
-      paths,
-      fallback: "blocking",
-    };
-  } catch (error) {
-    console.error("Error fetching blog paths:", error);
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
-}
-
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   const { slug } = context.params;
 
   try {
@@ -64,11 +38,10 @@ export async function getStaticProps(context) {
         metServices: resMeteoriqsServices.items,
         industries: resIndustries.items || [],
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching blog:", error);
-    return { notFound: true, revalidate: 60 };
+    return { notFound: true };
   }
 }
 
