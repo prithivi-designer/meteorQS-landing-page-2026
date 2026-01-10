@@ -26,7 +26,6 @@ export async function getServerSideProps() {
         industries: resIndustries.items || [],
         metServices: resServices.items || [],
       },
-      // Removed revalidate
     };
   } catch (error) {
     console.error("Error fetching case studies:", error);
