@@ -7,7 +7,7 @@ import { GoArrowRight } from "react-icons/go";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   try {
     const [resBlogs, resIndustries, resServices] = await Promise.all([
       client.getEntries({
@@ -26,7 +26,7 @@ export async function getStaticProps() {
         industries: resIndustries.items || [],
         metServices: resServices.items || [],
       },
-      revalidate: 60, // Revalidate every 60 seconds
+      // Removed revalidate
     };
   } catch (error) {
     console.error("Error fetching blogs:", error);
@@ -36,7 +36,6 @@ export async function getStaticProps() {
         industries: [],
         metServices: [],
       },
-      revalidate: 60,
     };
   }
 }
