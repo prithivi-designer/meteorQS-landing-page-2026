@@ -8,8 +8,31 @@ import ClientAcrossGlobe from "@/components/home/client-acros-globe";
 import LatestPosts from "@/components/home/latestblog";
 import CaseStudies from "@/components/home/casestudy";
 
-export async function getServerSideProps(context) {
-  const { slug } = context.params;
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsIndustries",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .filter((item) => item.fields.slug)
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }));
+
+    return {
+      paths,
+      fallback: false,
+    };
+  } catch (error) {
+    console.error("Error fetching industry paths:", error);
+    return { paths: [], fallback: false };
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const { slug } = params;
   console.log(`Fetching Industry Slug: ${slug}`);
 
   try {
@@ -90,7 +113,7 @@ export default function IndustryDetail({
 
   return (
     <>
-      <Header industries={industries} />
+      <Header industries={industries} services={metServices} />
 
       <section className="py-[4rem] px-[0rem] mx-auto bg-[#0A142F] min-h-screen">
         {bannerImage?.fields?.file?.url && (

@@ -7,7 +7,7 @@ import { GoArrowRight } from "react-icons/go";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     const [resBlogs, resIndustries, resServices] = await Promise.all([
       client.getEntries({
@@ -57,7 +57,7 @@ const item = {
 export default function BlogList({ blogs, industries, metServices }) {
   return (
     <>
-      <Header industries={industries} />
+      <Header industries={industries} services={metServices} />
       <div className="min-h-screen bg-[#0A142F] text-white pt-32 pb-20">
         {/* Page Hero */}
         <div className="container mx-auto px-6 mb-16 text-center">

@@ -5,8 +5,31 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import dayjs from "dayjs";
 
-export async function getServerSideProps(context) {
-  const { slug } = context.params;
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsCasestudy",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .filter((item) => item.fields.slug)
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }));
+
+    return {
+      paths,
+      fallback: false,
+    };
+  } catch (error) {
+    console.error("Error fetching case study paths:", error);
+    return { paths: [], fallback: false };
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const { slug } = params;
 
   try {
     const res = await client.getEntries({

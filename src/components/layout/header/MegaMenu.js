@@ -4,7 +4,7 @@ import NavItem from "./NavItem";
 import { industriesData, onDemandAppsData, servicesData } from "./menuData";
 import { FaAward } from "react-icons/fa6";
 
-const MegaMenu = ({ isOpen, activeMenu, industries }) => {
+const MegaMenu = ({ isOpen, activeMenu, industries, services }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 10, display: "none" }}
@@ -24,9 +24,25 @@ const MegaMenu = ({ isOpen, activeMenu, industries }) => {
                         <div className="flex flex-col gap-4">
                             <h3 className="text-sm font-semibold tracking-wider text-gray-400 uppercase">Services</h3>
                             <div className="grid grid-cols-3 gap-x-8 gap-y-2">
-                                {servicesData.map((item, index) => (
-                                    <NavItem key={index} {...item} />
-                                ))}
+                                {/* Use dynamic services if available, otherwise static */}
+                                {(services?.length > 0 ? services : servicesData).map((item, index) => {
+                                    const title = item.fields?.title || item.title;
+                                    const slug = item.fields?.slug;
+                                    const href = slug ? `/services/${slug}` : item.href;
+
+                                    // Find icon from static data
+                                    const staticMatch = servicesData.find(s => s.title.toLowerCase() === title.toLowerCase());
+                                    const icon = staticMatch?.icon || <FaAward />; // Default icon
+
+                                    return (
+                                        <NavItem
+                                            key={index}
+                                            title={title}
+                                            icon={icon}
+                                            href={href}
+                                        />
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -37,25 +53,21 @@ const MegaMenu = ({ isOpen, activeMenu, industries }) => {
                             <div className="flex flex-col gap-4">
                                 <h3 className="text-sm font-semibold tracking-wider text-gray-400 uppercase">Industries</h3>
                                 <div className="grid grid-cols-3 gap-x-8 gap-y-2">
-                                    {industriesData.map((item, index) => {
-                                        // Match static item with dynamic contentful item
-                                        const dynamicItem = industries?.find(
-                                            (ind) => ind.fields.title?.toLowerCase() === item.title.toLowerCase()
-                                        );
+                                    {(industries?.length > 0 ? industries : industriesData).map((item, index) => {
+                                        const title = item.fields?.title || item.title;
+                                        const slug = item.fields?.slug;
+                                        const href = slug ? `/industry/${slug}` : item.href;
 
-                                        // If dynamic item exists, use its slug, otherwise use link="#" or static href
-                                        const href = dynamicItem
-                                            ? `/industry/${dynamicItem.fields.slug}`
-                                            : "#"; // Dummy link if not created
-
-                                        const isDummy = !dynamicItem;
+                                        // Find icon from static data
+                                        const staticMatch = industriesData.find(s => s.title.toLowerCase() === title.toLowerCase());
+                                        const icon = staticMatch?.icon || <FaAward />; // Default icon
 
                                         return (
                                             <NavItem
                                                 key={index}
-                                                {...item}
+                                                title={title}
+                                                icon={icon}
                                                 href={href}
-                                                className={isDummy ? "opacity-50 cursor-not-allowed" : ""}
                                             />
                                         );
                                     })}

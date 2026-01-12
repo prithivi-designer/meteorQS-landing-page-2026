@@ -11,7 +11,7 @@ const LandingPg = dynamic(() => import("@/components/home"), {
   ssr: false,
 });
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     const [
       resBlogs,
@@ -100,7 +100,7 @@ export default function Home({ blogs, casestudies, industries, metServices }) {
 
   return (
     <>
-      <Header onNavigate={handleScrollTo} industries={industries} />
+      <Header onNavigate={handleScrollTo} industries={industries} services={metServices} />
       <LandingPg
         blogs={blogs}
         casestudies={casestudies}

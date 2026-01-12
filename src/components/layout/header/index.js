@@ -18,11 +18,12 @@ import { usePathname } from "next/navigation";
 import { GoArrowRight } from "react-icons/go";
 import logoWhite from "@/assets/images/landing/logo-white.png";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 import MegaMenu from "./MegaMenu";
 import { FaChevronDown } from "react-icons/fa6";
 import { industriesData, onDemandAppsData, servicesData } from "./menuData";
 
-export default function Header({ onNavigate, industries }) {
+export default function Header({ onNavigate, industries, services }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -77,7 +78,7 @@ export default function Header({ onNavigate, industries }) {
             className="lg:hidden text-white"
           />
           <NavbarBrand>
-            <Link href={"/"} className="font-[500]">
+            <Link as={NextLink} href={"/"} className="font-[500]">
               <Image
                 src={logoWhite}
                 alt="logoWhite"
@@ -123,19 +124,19 @@ export default function Header({ onNavigate, industries }) {
           </NavbarItem>
 
           <NavbarItem>
-            <Link className="text-white font-medium cursor-pointer text-sm tracking-wide" href="/causestudies">CASE STUDIES</Link>
+            <Link as={NextLink} className="text-white font-medium cursor-pointer text-sm tracking-wide" href="/causestudies">CASE STUDIES</Link>
           </NavbarItem>
 
           <NavbarItem>
-            <Link className="text-white font-medium cursor-pointer text-sm tracking-wide" href="/blogs">BLOG</Link>
+            <Link as={NextLink} className="text-white font-medium cursor-pointer text-sm tracking-wide" href="/blogs">BLOG</Link>
           </NavbarItem>
 
           <NavbarItem>
-            <Link className="text-white font-medium cursor-pointer text-sm tracking-wide" href="/?scrollTo=about">ABOUT US</Link>
+            <Link as={NextLink} className="text-white font-medium cursor-pointer text-sm tracking-wide" href="/?scrollTo=about">ABOUT US</Link>
           </NavbarItem>
 
           <NavbarItem>
-            <Link className="text-white font-medium cursor-pointer text-sm tracking-wide" href="#">INSIGHTS</Link>
+            <Link as={NextLink} className="text-white font-medium cursor-pointer text-sm tracking-wide" href="#">INSIGHTS</Link>
           </NavbarItem>
 
         </NavbarContent>
@@ -144,7 +145,7 @@ export default function Header({ onNavigate, industries }) {
         <NavbarContent justify="end" className="hidden sm:inline-flex">
           <NavbarItem>
             <Button
-              as={Link}
+              as={NextLink}
               color="primary"
               href="/?scrollTo=contact"
               className="text-white bg-blue-600 font-semibold rounded-full px-6 text-xs"
@@ -171,12 +172,20 @@ export default function Header({ onNavigate, industries }) {
             >
               <AccordionItem key="1" aria-label="Services" title="SERVICES">
                 <div className="flex flex-col gap-2 pl-4">
-                  {servicesData.map((item, i) => (
-                    <Link key={i} href={item.href} className="flex items-center gap-3 text-white/90 py-1.5 text-sm">
-                      <span className="text-blue-400">{item.icon}</span>
-                      {item.title}
-                    </Link>
-                  ))}
+                  {(services?.length > 0 ? services : servicesData).map((item, i) => {
+                    const title = item.fields?.title || item.title;
+                    const slug = item.fields?.slug;
+                    const href = slug ? `/services/${slug}` : item.href;
+                    const staticMatch = servicesData.find(s => s.title.toLowerCase() === title.toLowerCase());
+                    const icon = staticMatch?.icon || null;
+
+                    return (
+                      <Link as={NextLink} key={i} href={href} className="flex items-center gap-3 text-white/90 py-1.5 text-sm">
+                        <span className="text-blue-400">{icon}</span>
+                        {title}
+                      </Link>
+                    )
+                  })}
                 </div>
               </AccordionItem>
             </Accordion>
@@ -198,15 +207,23 @@ export default function Header({ onNavigate, industries }) {
               <AccordionItem key="2" aria-label="Industries" title="INDUSTRIES">
                 <div className="flex flex-col gap-2 pl-4">
                   <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Industries</p>
-                  {industriesData.map((item, i) => (
-                    <Link key={i} href={item.href} className="flex items-center gap-3 text-white/90 py-1.5 text-sm">
-                      <span className="text-blue-400">{item.icon}</span>
-                      {item.title}
-                    </Link>
-                  ))}
+                  {(industries?.length > 0 ? industries : industriesData).map((item, i) => {
+                    const title = item.fields?.title || item.title;
+                    const slug = item.fields?.slug;
+                    const href = slug ? `/industry/${slug}` : item.href;
+                    const staticMatch = industriesData.find(s => s.title.toLowerCase() === title.toLowerCase());
+                    const icon = staticMatch?.icon || null;
+
+                    return (
+                      <Link as={NextLink} key={i} href={href} className="flex items-center gap-3 text-white/90 py-1.5 text-sm">
+                        <span className="text-blue-400">{icon}</span>
+                        {title}
+                      </Link>
+                    )
+                  })}
                   <p className="text-xs text-gray-400 uppercase tracking-wider mt-4 mb-2">On Demand Apps</p>
                   {onDemandAppsData.map((item, i) => (
-                    <Link key={i} href={item.href} className="flex items-center gap-3 text-white/90 py-1.5 text-sm">
+                    <Link as={NextLink} key={i} href={item.href} className="flex items-center gap-3 text-white/90 py-1.5 text-sm">
                       <span className="text-blue-400">{item.icon}</span>
                       {item.title}
                     </Link>
@@ -217,22 +234,22 @@ export default function Header({ onNavigate, industries }) {
           </NavbarMenuItem>
 
           <NavbarMenuItem>
-            <Link className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/causestudies">CASE STUDIES</Link>
+            <Link as={NextLink} className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/causestudies">CASE STUDIES</Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/blogs">BLOG</Link>
+            <Link as={NextLink} className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/blogs">BLOG</Link>
           </NavbarMenuItem>
 
           <NavbarMenuItem>
-            <Link className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/?scrollTo=about">ABOUT US</Link>
+            <Link as={NextLink} className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/?scrollTo=about">ABOUT US</Link>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <Link className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/">INSIGHTS</Link>
+            <Link as={NextLink} className="w-full text-white py-3 text-lg font-bold border-b border-white/10" href="/">INSIGHTS</Link>
           </NavbarMenuItem>
 
           <NavbarMenuItem className="flex flex-col gap-4 mt-6">
             <Button
-              as={Link}
+              as={NextLink}
               color="primary"
               href="/?scrollTo=contact"
               className="text-white bg-blue-600 w-full font-bold py-6 rounded-full"
@@ -250,7 +267,7 @@ export default function Header({ onNavigate, industries }) {
           </NavbarMenuItem>
         </NavbarMenu>
 
-        <MegaMenu isOpen={isMegaMenuOpen} activeMenu={activeMenu} industries={industries} />
+        <MegaMenu isOpen={isMegaMenuOpen} activeMenu={activeMenu} industries={industries} services={services} />
       </Navbar >
     </>
   );

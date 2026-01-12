@@ -8,8 +8,10 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
   reactStrictMode: true,
   images: {
+    unoptimized: true,
     domains: ["images.ctfassets.net", "localhost", "images.unsplash.com", "plus.unsplash.com"],
   },
   webpack(config) {

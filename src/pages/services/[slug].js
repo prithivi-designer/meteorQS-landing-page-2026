@@ -7,8 +7,31 @@ import LatestPosts from "@/components/home/latestblog";
 import ClientAcrossGlobe from "@/components/home/client-acros-globe";
 import ContactSection from "@/components/home/contact-section";
 
-export async function getServerSideProps(context) {
-  const { slug } = context.params;
+export async function getStaticPaths() {
+  try {
+    const res = await client.getEntries({
+      content_type: "meteoriqsServices",
+      select: "fields.slug",
+    });
+
+    const paths = res.items
+      .filter((item) => item.fields.slug)
+      .map((item) => ({
+        params: { slug: item.fields.slug },
+      }));
+
+    return {
+      paths,
+      fallback: false,
+    };
+  } catch (error) {
+    console.error("Error fetching service paths:", error);
+    return { paths: [], fallback: false };
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const { slug } = params;
 
   try {
     // Fetch the service detail by slug
@@ -91,7 +114,7 @@ export default function MetServicesDetail({
 
   return (
     <>
-      <Header industries={industries} />
+      <Header industries={industries} services={metServices} />
       <section className="py-[4rem] px-[0rem] mx-auto bg-[#0A142F] min-h-screen text-white">
         {bannerImage?.fields?.file?.url && (
           <div className="relative w-full h-[50dvh] mb-8">

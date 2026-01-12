@@ -5,7 +5,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { client } from "@/lib/contentful";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     const [resIndustries, resServices] = await Promise.all([
       client.getEntries({ content_type: "meteoriqsIndustries" }),
@@ -40,7 +40,7 @@ export default function Terms({ industries, metServices }) {
 
   return (
     <>
-      <Header onNavigate={handleScrollTo} industries={industries} />
+      <Header onNavigate={handleScrollTo} industries={industries} services={metServices} />
       <main className="pt-[4.5rem]">
         <section className="flex min-h-screen flex-col px-[2rem] py-[3rem]">
           <h2 className="text-[2.25rem] font-[800] mb-[1.5rem]">
