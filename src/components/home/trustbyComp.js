@@ -2,16 +2,18 @@
 import Image from "next/image";
 import React, { forwardRef } from "react";
 
-import trustImg1 from "@/assets/images/trustedBy/trusted-logo-01.jpg";
-import trustImg2 from "@/assets/images/trustedBy/trusted-logo-02.jpg";
-import trustImg3 from "@/assets/images/trustedBy/trusted-logo-03.jpg";
-import trustImg4 from "@/assets/images/trustedBy/trusted-logo-04.jpg";
-import trustImg5 from "@/assets/images/trustedBy/trusted-logo-05.jpg";
-import trustImg6 from "@/assets/images/trustedBy/trusted-logo-06.jpg";
-import trustImg7 from "@/assets/images/trustedBy/trusted-logo-07.jpg";
-import trustImg8 from "@/assets/images/trustedBy/trusted-logo-08.jpg";
-import trustImg9 from "@/assets/images/trustedBy/trusted-logo-09.jpg";
-import trustImg10 from "@/assets/images/trustedBy/trusted-logo-10.jpg";
+import trustImg1 from "@/assets/images/trustedBy/trusted-logo-01.png";
+import trustImg2 from "@/assets/images/trustedBy/trusted-logo-02.png";
+import trustImg3 from "@/assets/images/trustedBy/trusted-logo-03.png";
+import trustImg4 from "@/assets/images/trustedBy/trusted-logo-04.png";
+import trustImg5 from "@/assets/images/trustedBy/trusted-logo-05.png";
+import trustImg6 from "@/assets/images/trustedBy/trusted-logo-06.png";
+import trustImg7 from "@/assets/images/trustedBy/trusted-logo-07.png";
+import trustImg8 from "@/assets/images/trustedBy/trusted-logo-08.png";
+import trustImg9 from "@/assets/images/trustedBy/trusted-logo-09.png";
+import trustImg10 from "@/assets/images/trustedBy/trusted-logo-10.png";
+import trustImg11 from "@/assets/images/trustedBy/trusted-logo-11.png";
+import trustImg12 from "@/assets/images/trustedBy/trusted-logo-12.png";
 
 const trustedLogos = [
   trustImg1,
@@ -24,6 +26,8 @@ const trustedLogos = [
   trustImg8,
   trustImg9,
   trustImg10,
+  trustImg11,
+  trustImg12,
 ];
 
 const TrustBy = forwardRef(({ trustedBySection }, ref) => {
